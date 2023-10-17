@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    </meta>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    </meta>
+    <title>Sign Up</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    </meta>
+    <!-- icons cdn -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    </link>
+    <!-- font cdn -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- css -->
+    <link rel="stylesheet" type="text/css" href="./main.css">
+    </link>
+</head>
+
+<body>
+
+    <div class="landing">
+
+        <img src="./assets/logo.png" class="logo">
+        <h2 class="center" style="color: #66ba45;">SAYLANI WELFARE</h2>
+        <h4 class="center" style="color: #03509c;">ONLINE DISCOUNT STORE</h4>
+        <button onclick="window.location.href ='./signup/index.html'" class="button"
+            style="margin: 0; margin-top: 1em; font-size: 1em;">Get Started</button>
+
+    </div>
+
+    <!-- firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <!-- sweet alert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- javascript -->
+
+    <script>
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBUn3n_bx699MPHBgdCyaqnh-gS1nOMtvI",
+            authDomain: "b8-final.firebaseapp.com",
+            projectId: "b8-final",
+            storageBucket: "b8-final.appspot.com",
+            messagingSenderId: "196020829543",
+            appId: "1:196020829543:web:40089549bcf2048b42c3c2",
+            measurementId: "G-LD2CQVZL42"
+        };
+        // initialize firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // logout automatically
+        firebase.auth().onAuthStateChanged(function (user) {
+            if (user) {
+                window.location.href = "./home/index.html";
+            }
+        });
+
+    </script>
+</body>
+
+
+</html>
