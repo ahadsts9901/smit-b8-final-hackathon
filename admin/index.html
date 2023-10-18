@@ -30,34 +30,39 @@
 
 <body>
 
-    <div class="flex flex-col justify-right items-center gap-[0.3em] w-[100%] p-[1em]">
-        <img id="cartImg" src="../assets/profile.webp"
-            class="ml-[auto] w-[1.5em] h-[1.5em] border-[2px] border-[#66ba45] rounded-[100%] object-cover">
-        <div class="flex justify-between items-center w-[100%]">
-            <div>
-                <h3 class="text-[1.3em] text-[#66ba45]">Shopping</h3>
-                <p class="text-[#03509c]">Cart</p>
+    <div class="w-[100%] p-[1em] flex flex-col justify-center gap-[1em] items-center">
+
+        <div class="w-[100%] flex justify-center gap-[1em] items-center border-b-[1px] border-[#ccc] pb-[1em]">
+            <i class="text-[#666] bi bi-arrow-left-circle-fill text-[1.5em]" onclick="window.history.back()"></i>
+            <img id="adminImg" src="../assets/profile.webp" class="w-[3em] h-[3em] border-[2px] border-[#66ba45] rounded-[100%]">
+            <div class="flex flex-col justify-center">
+                <p id="adminName" class="text-[#03509c]">Salman Ahmed</p>
+                <p class="text-[#66ba45] text-[0.8em]">Admin</p>
             </div>
-            <i class="bi bi-trash-fill text-[1.2em] text-[#66ba45]"></i>
+            <i class="text-[#222] bi bi-journal-text text-[1.5em]"></i>
         </div>
+
+        <p class="w-[100%] text-left text-[#03509c]">All Product</p>
+
+        <div class="userNav navBarGreen flex justify-between items-center p-[1em] w-[100%] bg-[#f0f0f0]">
+            <a href="./index.html" class="flex w-[5em] flex-col justify-center items-center">
+                <i class="text-[#66ba45] bi bi-house-fill text-[1.5em]"></i>
+                <p class="text-[#777]">Home</p>
+            </a>
+
+            <a href="./add.html" class="flex w-[5em] flex-col justify-center items-center">
+                <i class="text-[#666] bi bi-plus-circle text-[1.5em]"></i>
+                <p class="text-[#777]">Add Items</p>
+            </a>
+
+            <a href="./profile.html" class="flex w-[5em] flex-col justify-center items-center">
+                <i class="text-[#666] bi bi-person-fill text-[1.5em]"></i>
+                <p class="text-[#777]">Account</p>
+            </a>
+        </div>
+
     </div>
 
-    <div class="userNav navBarGreen flex justify-between items-center p-[1em] w-[100%] bg-[#f0f0f0]">
-        <a href="./index.html" class="flex w-[5em] flex-col justify-center items-center">
-            <i class="text-[#666] bi bi-house-fill text-[1.5em]"></i>
-            <p class="text-[#777]">Home</p>
-        </a>
-
-        <a href="./cart.html" class="flex w-[5em] flex-col justify-center items-center">
-            <i class="text-[#66ba45] bi bi-cart4 text-[1.5em]"></i>
-            <p class="text-[#777]">Cart</p>
-        </a>
-
-        <a href="./profile.html" class="flex w-[5em] flex-col justify-center items-center">
-            <i class="text-[#666] bi bi-person-fill text-[1.5em]"></i>
-            <p class="text-[#777]">Account</p>
-        </a>
-    </div>
 
     <!-- firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -99,7 +104,8 @@
                                     var data = doc.data();
 
                                     if (data.email === username) {
-                                        document.querySelector("#cartImg").src = data.photo;
+                                        document.querySelector("#adminImg").src = data.photo;
+                                        document.querySelector("#adminName").innerText = `${data.firstName} ${data.lastName}`;
                                         // console.log("founded cart")
                                     }
 

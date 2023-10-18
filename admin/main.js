@@ -16,36 +16,6 @@ const db = firebase.firestore()
 firebase.auth().onAuthStateChanged(function (user) {
     if (!user) {
         window.location.href = "../login/index.html";
-    } else {
-        let username = user.email
-        {
-            db.collection("users")
-                .get()
-                .then((querySnapshot) => {
-                    {
-                        querySnapshot.forEach(function (doc) {
-                            var data = doc.data();
-
-                            if (data.email === username) {
-                                document.getElementById("userName").innerText = `${data.firstName}  ${data.lastName}`;
-                                document.querySelector(".userProfile").src = data.photo;
-                                if (data.isAdmin == true) {
-                                    document.querySelector(".userNav").style.display = "none";
-                                    document.querySelector(".adminNav").style.display = "flex";
-                                } else if (data.isAdmin == false) {
-                                    document.querySelector(".adminNav").style.display = "none";
-                                    document.querySelector(".userNav").style.display = "flex";
-                                }
-                                // console.log("founded")
-                            }
-
-                        })
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error getting posts: ", error);
-                });
-        }
     }
 });
 

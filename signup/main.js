@@ -1,12 +1,13 @@
 const firebaseConfig = {
-    apiKey: "AIzaSyBUn3n_bx699MPHBgdCyaqnh-gS1nOMtvI",
-    authDomain: "b8-final.firebaseapp.com",
-    projectId: "b8-final",
-    storageBucket: "b8-final.appspot.com",
-    messagingSenderId: "196020829543",
-    appId: "1:196020829543:web:40089549bcf2048b42c3c2",
-    measurementId: "G-LD2CQVZL42"
+    apiKey: "AIzaSyA0C7Hbt2UsuqJmBRBbTvx2Y7aUXRZSzIc",
+    authDomain: "b8-hackathon-6f47c.firebaseapp.com",
+    projectId: "b8-hackathon-6f47c",
+    storageBucket: "b8-hackathon-6f47c.appspot.com",
+    messagingSenderId: "65171787640",
+    appId: "1:65171787640:web:89345a160a3024e377c28d",
+    measurementId: "G-HZR4WH9ZKH"
   };
+  
 // initialize firebase
 firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
