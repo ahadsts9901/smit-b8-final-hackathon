@@ -1,12 +1,13 @@
 const firebaseConfig = {
-    apiKey: "AIzaSyA0C7Hbt2UsuqJmBRBbTvx2Y7aUXRZSzIc",
-    authDomain: "b8-hackathon-6f47c.firebaseapp.com",
-    projectId: "b8-hackathon-6f47c",
-    storageBucket: "b8-hackathon-6f47c.appspot.com",
-    messagingSenderId: "65171787640",
-    appId: "1:65171787640:web:89345a160a3024e377c28d",
-    measurementId: "G-HZR4WH9ZKH"
+    apiKey: "AIzaSyBUn3n_bx699MPHBgdCyaqnh-gS1nOMtvI",
+    authDomain: "b8-final.firebaseapp.com",
+    projectId: "b8-final",
+    storageBucket: "b8-final.appspot.com",
+    messagingSenderId: "196020829543",
+    appId: "1:196020829543:web:40089549bcf2048b42c3c2",
+    measurementId: "G-LD2CQVZL42"
 };
+
 
 // initialize firebase
 firebase.initializeApp(firebaseConfig);
@@ -16,8 +17,112 @@ const db = firebase.firestore()
 firebase.auth().onAuthStateChanged(function (user) {
     if (!user) {
         window.location.href = "../login/index.html";
+    } else {
+        let username = user.email
+        {
+            db.collection("users")
+                .get()
+                .then((querySnapshot) => {
+                    {
+                        querySnapshot.forEach(function (doc) {
+                            var data = doc.data();
+
+                            if (data.email === username) {
+
+                                if (data.isAdmin == false) {
+                                    window.location.href = "../home/index.html"
+                                }
+
+                            }
+
+                        })
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error getting posts: ", error);
+                });
+        }
     }
 });
+
+function addProduct(e) {
+
+    e.preventDefault();
+
+    let fileImg = e.target.querySelector("#productImg")
+
+    let d = new Date();
+    let time = d.getTime();
+    console.log(time);
+    let fileref = firebase.storage().ref().child(`/admin/products/${time}`);
+
+    // console.log(fileImg.files[0]);
+
+    let uploadTask = fileref.put(fileImg.files[0]);
+
+    uploadTask.on('state_changed',
+        (snapshot) => {
+            // console.log(snapshot);
+        },
+        (error) => {
+            console.log(error);
+        },
+        () => {
+            uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+
+                // add product
+
+                let productImage = downloadURL
+                let productName = document.querySelector("#itemName").value
+                let productCategory = document.querySelector("#category").value
+                let productDesc = document.querySelector("#description").value
+                let productPrice = document.querySelector("#price").value
+                let productUnit = document.querySelector("#unit").value
+
+                setTimeout(() => {
+
+                    db.collection("products")
+                        .add({
+                            image: productImage,
+                            name: productName,
+                            category: productCategory,
+                            description: productDesc,
+                            price: productPrice,
+                            unit: productUnit
+                        })
+                        .then(function (docRef) {
+
+                            // const Toast = Swal.mixin({
+                            //     toast: true,
+                            //     position: 'top-end',
+                            //     showConfirmButton: false,
+                            //     timer: 1500,
+                            //     timerProgressBar: true,
+                            //     didOpen: (toast) => {
+                            //         toast.addEventListener('mouseenter', Swal.stopTimer)
+                            //         toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            //     }
+                            // })
+
+                            // Toast.fire({
+                            //     icon: 'success',
+                            //     title: 'Added successfully'
+                            // })
+
+                            console.log("Added");
+
+                        })
+                        .catch(function (error) {
+                            console.error("Error adding document: ", error);
+                        });
+
+                }, 10000)
+
+            });
+        }
+    );
+
+}
 
 function logout() {
     firebase

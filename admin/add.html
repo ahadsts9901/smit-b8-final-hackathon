@@ -6,7 +6,7 @@
     </meta>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     </meta>
-    <title>Login</title>
+    <title>Add Products</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     </meta>
     <!-- icons cdn -->
@@ -47,7 +47,7 @@
 
         <form onsubmit="addProduct(event)" class="w-[100%] flex flex-col justify-right items-center gap-[1.5em]">
 
-            <input required onchange="productImg(event)" type="file" hidden id="productImg" accept="image/*">
+            <input name="img" type="file" id="productImg" accept="image/*" />
 
             <label for="productImg" class="flex justify-center items-center w-[100%] h-[8em] rounded-[15px] bg-[#bbb]">
 
@@ -55,31 +55,34 @@
 
             </label>
 
-            <input required type="text" placeholder="Item Name" class="w-[100%] p-[0.6em_1em] rounded-[10px]">
+            <input name="itemName" id="itemName" required type="text" minlength="1" maxlength="20" placeholder="Item Name"
+                class="w-[100%] p-[0.6em_1em] rounded-[10px]">
 
             <select required name="category" id="category" class="w-[100%] p-[0.6em_1em] rounded-[10px]">
                 <option>Select Category</option>
-                <option value="vegetables">Vegetables</option>
+                <option value="vegetables" selected>Vegetables</option>
                 <option value="fruits">Fruits</option>
                 <option value="meat">Meat</option>
                 <option value="grain">Grain</option>
                 <option value="spices">Spices</option>
             </select>
 
-            <textarea required placeholder="Describe this item" minlength="10" maxlength="35" id="desc" rows="4"
-                class="w-[100%] p-[0.6em_1em] rounded-[10px]"></textarea>
+            <textarea name="description" id="description" required placeholder="Describe this item" minlength="10" maxlength="50"
+                id="desc" rows="4" class="w-[100%] p-[0.6em_1em] rounded-[10px]"></textarea>
 
             <div class="w-[100%] flex justify-between items-center gap-[1em]">
                 <p class="text-[#03509c]">Unit Name:</p>
-                <input required type="text" class="rounded-[10px] p-[0.4em] w-[8em]" placeholder="pcs/kg/dozens">
+                <input name="unit" id="unit" required type="text" class="rounded-[10px] p-[0.4em] w-[8em]" maxlength="8"
+                    minlength="1" placeholder="pcs/kg/dozens">
             </div>
 
             <div class="w-[100%] flex justify-between items-center gap-[1em]">
                 <p class="text-[#03509c]">Unit Price:</p>
-                <input required type="text" class="rounded-[10px] p-[0.4em] w-[8em]" placeholder="$3.22">
+                <input name="price" id="price" min="1" max="100000" required type="number" class="rounded-[10px] p-[0.4em] w-[8em]"
+                    placeholder="$3.22">
             </div>
 
-            <button class="button m-[auto]">Add Product</button>
+            <button class="button m-[auto]" name="button">Add Product</button>
 
         </form>
 
@@ -108,25 +111,12 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
     <!-- sweet alert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- javascript -->
+    <script src="./main.js"></script>
     <script>
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyA0C7Hbt2UsuqJmBRBbTvx2Y7aUXRZSzIc",
-            authDomain: "b8-hackathon-6f47c.firebaseapp.com",
-            projectId: "b8-hackathon-6f47c",
-            storageBucket: "b8-hackathon-6f47c.appspot.com",
-            messagingSenderId: "65171787640",
-            appId: "1:65171787640:web:89345a160a3024e377c28d",
-            measurementId: "G-HZR4WH9ZKH"
-        };
-
-
-        // initialize firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore()
 
         // logout automatically
         firebase.auth().onAuthStateChanged(function (user) {
