@@ -676,7 +676,6 @@ ul {
 input[type="file"]{
     display: none;
 }
-
 @media only screen and (max-width: 550px) {
     .special {
         flex-direction: column-reverse;

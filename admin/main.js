@@ -29,6 +29,11 @@ firebase.auth().onAuthStateChanged(function (user) {
 
                             if (data.email === username) {
 
+
+                                document.querySelector("#userName").innerText = `${data.firstName} ${data.lastName}`
+
+                                document.querySelector(".userProfile").src = data.photo
+
                                 if (data.isAdmin == false) {
                                     window.location.href = "../home/index.html"
                                 }
@@ -53,7 +58,7 @@ function addProduct(e) {
 
     let d = new Date();
     let time = d.getTime();
-    console.log(time);
+    // console.log(time);
     let fileref = firebase.storage().ref().child(`/admin/products/${time}`);
 
     // console.log(fileImg.files[0]);
@@ -92,31 +97,33 @@ function addProduct(e) {
                         })
                         .then(function (docRef) {
 
-                            // const Toast = Swal.mixin({
-                            //     toast: true,
-                            //     position: 'top-end',
-                            //     showConfirmButton: false,
-                            //     timer: 1500,
-                            //     timerProgressBar: true,
-                            //     didOpen: (toast) => {
-                            //         toast.addEventListener('mouseenter', Swal.stopTimer)
-                            //         toast.addEventListener('mouseleave', Swal.resumeTimer)
-                            //     }
-                            // })
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 1500,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                                }
+                            })
 
-                            // Toast.fire({
-                            //     icon: 'success',
-                            //     title: 'Added successfully'
-                            // })
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Added successfully'
+                            })
 
-                            console.log("Added");
+                            // console.log("Added");
 
                         })
                         .catch(function (error) {
                             console.error("Error adding document: ", error);
                         });
 
-                }, 10000)
+                }, 0 )
+
+                e.target.reset()
 
             });
         }

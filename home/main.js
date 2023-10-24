@@ -6,7 +6,7 @@ const firebaseConfig = {
     messagingSenderId: "196020829543",
     appId: "1:196020829543:web:40089549bcf2048b42c3c2",
     measurementId: "G-LD2CQVZL42"
-  };
+};
 
 // initialize firebase
 firebase.initializeApp(firebaseConfig);
@@ -26,20 +26,20 @@ firebase.auth().onAuthStateChanged(function (user) {
                         querySnapshot.forEach(function (doc) {
                             var data = doc.data();
 
-                            if(data.isAdmin == true){
-                                window.location.href = "../admin/index.html"
-                            }
-
                             if (data.email === username) {
-                                document.getElementById("userName").innerText = `${data.firstName}  ${data.lastName}`;
-                                document.querySelector(".userProfile").src = data.photo;
+
+                                // console.log(data.isAdmin);
+
                                 if (data.isAdmin == true) {
-                                    document.querySelector(".userNav").style.display = "none";
-                                    document.querySelector(".adminNav").style.display = "flex";
-                                } else if (data.isAdmin == false) {
-                                    document.querySelector(".adminNav").style.display = "none";
-                                    document.querySelector(".userNav").style.display = "flex";
+                                    window.location.href = "../admin/index.html"
                                 }
+
+                                let names = document.getElementById("userName")
+                                if(names) { names.innerText = `${data.firstName}  ${data.lastName}` }
+                                
+                                let pic = document.querySelector(".userProfile")
+                                if(pic) {pic.src = data.photo}
+
                                 // console.log("founded")
                             }
 
@@ -203,3 +203,63 @@ function file(event) {
     );
 
 }
+
+function renderProducts(){
+
+    var container = document.querySelector(".products")
+    container.innerHTML = "";
+
+    db.collection("products")
+        .get()
+        .then(function(querySnapshot) {
+            if (querySnapshot.size === 0) {
+                container.innerHTML = "<div class='blue'>No Product found</div>";
+            } else {
+                querySnapshot.forEach(function(doc) {
+
+                    var data = doc.data();
+
+                    console.log(data)
+
+                    let product = document.createElement("div")
+                    product.className += "flex justify-between items-center gap-[1em] p-[0.5em] w-[100%]"
+                    
+                    let image = document.createElement("img")
+                    image.className += "w-[7em] h-[5em] rounded-[15px] object-cover"
+                    image.src = data.image
+
+                    let cont = document.createElement("div")
+                    cont.className += "flex flex-col justify-right items-start w-[50%]"
+
+                    let title = document.createElement("p")
+                    title.className += "font-bold text-[1.2em]"
+                    title.innerText = data.name
+                    cont.appendChild(title)
+
+                    let desc = document.createElement("p")
+                    desc.className += "font-bold text-[0.9em] text-[#888]"
+                    desc.innerText = data.description
+                    cont.appendChild(desc)
+
+                    let smcont = document.createElement("div")
+                    smcont.className += "flex flex-col justify-right items-start w-[100%]"
+
+                    // details remaining
+
+                    product.appendChild(image)
+                    product.appendChild(cont)
+
+                    container.appendChild(product)
+
+                });
+            }
+        })
+        .catch(function(error) {
+            console.log("Error getting documents: ", error);
+        });
+
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    renderProducts()
+});
