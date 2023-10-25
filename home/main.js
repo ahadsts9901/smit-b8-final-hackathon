@@ -35,10 +35,10 @@ firebase.auth().onAuthStateChanged(function (user) {
                                 }
 
                                 let names = document.getElementById("userName")
-                                if(names) { names.innerText = `${data.firstName}  ${data.lastName}` }
-                                
+                                if (names) { names.innerText = `${data.firstName}  ${data.lastName}` }
+
                                 let pic = document.querySelector(".userProfile")
-                                if(pic) {pic.src = data.photo}
+                                if (pic) { pic.src = data.photo }
 
                                 // console.log("founded")
                             }
@@ -204,32 +204,32 @@ function file(event) {
 
 }
 
-function renderProducts(){
+function renderProducts() {
 
     var container = document.querySelector(".products")
     container.innerHTML = "";
 
     db.collection("products")
         .get()
-        .then(function(querySnapshot) {
+        .then(function (querySnapshot) {
             if (querySnapshot.size === 0) {
                 container.innerHTML = "<div class='blue'>No Product found</div>";
             } else {
-                querySnapshot.forEach(function(doc) {
+                querySnapshot.forEach(function (doc) {
 
                     var data = doc.data();
 
-                    console.log(data)
+                    // console.log(data)
 
                     let product = document.createElement("div")
                     product.className += "flex justify-between items-center gap-[1em] p-[0.5em] w-[100%]"
-                    
+
                     let image = document.createElement("img")
-                    image.className += "w-[7em] h-[5em] rounded-[15px] object-cover"
+                    image.className += "product w-[7em] h-[5em] rounded-[15px] object-cover"
                     image.src = data.image
 
                     let cont = document.createElement("div")
-                    cont.className += "flex flex-col justify-right items-start w-[40%]"
+                    cont.className += "flex flex-col justify-right items-start w-[100%]"
 
                     let title = document.createElement("p")
                     title.className += "font-bold text-[1em]"
@@ -242,7 +242,7 @@ function renderProducts(){
                     cont.appendChild(desc)
 
                     let smcont = document.createElement("div")
-                    smcont.className += "flex flex-col justify-right items-end w-[100%] h-[100%] gap-[1em]"
+                    smcont.className += "flex flex-col justify-right items-end w-[5em] h-[100%] gap-[1em]"
 
                     let det = document.createElement("p")
                     det.className += "text-[0.8em] text-[#212121] self-end"
@@ -255,7 +255,11 @@ function renderProducts(){
 
                     let icon = document.createElement("i")
                     icon.className += "bi bi-plus text-[#fff] pt-[0.3em]"
+                    icon.addEventListener("click", function () {
+                        addToCart(data);
+                    })
                     plus.appendChild(icon)
+
 
                     product.appendChild(image)
                     product.appendChild(cont)
@@ -266,12 +270,103 @@ function renderProducts(){
                 });
             }
         })
-        .catch(function(error) {
+        .catch(function (error) {
             console.log("Error getting documents: ", error);
         });
 
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    renderProducts()
+function addToCart(product) {
+    const user = firebase.auth().currentUser;
+    if (!user) {
+        console.error('User not authenticated. Cannot update cart and place an order.');
+        return;
+    }
+
+    const db = firebase.firestore();
+
+    const userIdentifier = user.email;
+
+    db.collection('users')
+        .where('email', '==', userIdentifier)
+        .get()
+        .then(querySnapshot => {
+            if (querySnapshot.size === 1) {
+                const userDocRef = querySnapshot.docs[0].ref;
+                userDocRef.collection('orders').add(product)
+                    .then(docRef => {
+
+                        renderProducts();
+                    })
+                    .catch(error => {
+                        console.error('Error adding order to the "orders" subcollection:', error);
+                    });
+            } else {
+                console.error('User not found or multiple users with the same identifier.');
+            }
+        })
+        .catch(error => {
+            console.error('Error querying users:', error);
+        });
+}
+
+function renderCartToUser() {
+    var container = document.querySelector(".cart");
+    container.innerHTML = "";
+    console.log("renderCart");
+
+    const db = firebase.firestore();
+
+    db.collection("users")
+        .get()
+        .then(function (querySnapshot) {
+            if (querySnapshot.size === 0) {
+                container.innerHTML = "<div>No user found.</div>";
+            } else {
+                querySnapshot.forEach(function (doc) {
+
+                    const userData = doc.data();
+                    let userEmail = firebase.auth().currentUser.email
+
+                    if (userEmail === userData.email) {
+
+                        console.log("user",userData);
+                        const ordersCollectionRef = doc.ref.collection("orders");
+
+                        ordersCollectionRef.get()
+                            .then(function (ordersQuerySnapshot) {
+                                if (ordersQuerySnapshot.size === 0) {
+                                    console.log("No orders found for this user.");
+                                } else {
+                                    ordersQuerySnapshot.forEach(function (orderDoc) {
+                                        const orderData = orderDoc.data();
+                                        console.log("orders",orderData);
+
+                                        // render cart products
+
+                                    });
+                                }
+                            })
+                            .catch(function (error) {
+                                console.error("Error getting orders: ", error);
+                            });
+
+                    }
+
+                });
+            }
+        })
+        .catch(function (error) {
+            console.error("Error getting user documents: ", error);
+        });
+}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    try {
+        renderProducts();
+    } catch (error) {
+        console.error('Error rendering products:', error);
+        renderCartToUser();
+    }
 });
