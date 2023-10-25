@@ -681,6 +681,11 @@ input[type="file"]{
     width: 7em!important;
 }
 
+.cart{
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
 @media only screen and (max-width: 550px) {
     .special {
         flex-direction: column-reverse;

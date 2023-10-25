@@ -313,7 +313,7 @@ function addToCart(product) {
 function renderCartToUser() {
     var container = document.querySelector(".cart");
     container.innerHTML = "";
-    console.log("renderCart");
+    // console.log("renderCart");
 
     const db = firebase.firestore();
 
@@ -330,7 +330,7 @@ function renderCartToUser() {
 
                     if (userEmail === userData.email) {
 
-                        console.log("user",userData);
+                        // console.log("user", userData);
                         const ordersCollectionRef = doc.ref.collection("orders");
 
                         ordersCollectionRef.get()
@@ -339,10 +339,86 @@ function renderCartToUser() {
                                     console.log("No orders found for this user.");
                                 } else {
                                     ordersQuerySnapshot.forEach(function (orderDoc) {
-                                        const orderData = orderDoc.data();
-                                        console.log("orders",orderData);
+                                        const data = orderDoc.data();
+                                        // console.log("orders", data);
 
-                                        // render cart products
+                                        let product = document.createElement("div")
+                                        product.className += "flex justify-left items-center gap-[1em] p-[0.5em] w-[100%]"
+
+                                        let image = document.createElement("img")
+                                        image.className += "product w-[7em] h-[5em] rounded-[15px] object-cover"
+                                        image.src = data.image
+
+
+                                        let title = document.createElement("p")
+                                        title.className += "font-bold text-[1em]"
+                                        title.innerText = data.name
+
+                                        let det = document.createElement("p")
+                                        det.className += "text-[0.8em] text-[#212121] w-[100%] text-right"
+                                        det.innerText = `${data.price} - ${data.unit}`
+
+                                        let del = document.createElement("i")
+                                        del.className += "bi bi-x-lg text-[#212121]"
+                                        del.addEventListener("click", function(){ deleteProductFromCart(orderDoc.id) })
+
+                                        function deleteProductFromCart(orderDocId) {
+                                            const user = firebase.auth().currentUser;
+                                            if (!user) {
+                                                console.error('User not authenticated. Cannot delete product from cart.');
+                                                return;
+                                            }
+                                        
+                                            const db = firebase.firestore();
+                                        
+                                            // Find the user's document based on their email
+                                            db.collection("users")
+                                                .where("email", "==", user.email)
+                                                .get()
+                                                .then(function (querySnapshot) {
+                                                    if (querySnapshot.size === 0) {
+                                                        console.error('User not found.');
+                                                    } else {
+                                                        querySnapshot.forEach(function (userDoc) {
+                                                            const ordersCollectionRef = userDoc.ref.collection("orders");
+                                        
+                                                            // Find the order document with the provided orderDocId
+                                                            ordersCollectionRef.doc(orderDocId).get()
+                                                                .then(function (orderDoc) {
+                                                                    if (orderDoc.exists) {
+                                                                        // Delete the order document
+                                                                        orderDoc.ref.delete()
+                                                                            .then(function () {
+                                                                                console.log('Order deleted successfully.');
+                                                                                // You can update the cart or perform other actions
+                                                                                renderCartToUser();
+                                                                            })
+                                                                            .catch(function (error) {
+                                                                                console.error('Error deleting order:', error);
+                                                                            });
+                                                                    } else {
+                                                                        console.error('Order not found.');
+                                                                    }
+                                                                })
+                                                                .catch(function (error) {
+                                                                    console.error('Error getting order document:', error);
+                                                                });
+                                                        });
+                                                    }
+                                                })
+                                                .catch(function (error) {
+                                                    console.error("Error querying users:", error);
+                                                });
+                                        }
+                                                                                
+
+                                        product.appendChild(image)
+                                        product.appendChild(title)
+                                        product.appendChild(det)
+                                        product.appendChild(del)
+
+                                        container.appendChild(product)
+
 
                                     });
                                 }
