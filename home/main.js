@@ -229,25 +229,37 @@ function renderProducts(){
                     image.src = data.image
 
                     let cont = document.createElement("div")
-                    cont.className += "flex flex-col justify-right items-start w-[50%]"
+                    cont.className += "flex flex-col justify-right items-start w-[40%]"
 
                     let title = document.createElement("p")
-                    title.className += "font-bold text-[1.2em]"
+                    title.className += "font-bold text-[1em]"
                     title.innerText = data.name
                     cont.appendChild(title)
 
                     let desc = document.createElement("p")
-                    desc.className += "font-bold text-[0.9em] text-[#888]"
+                    desc.className += "font-bold text-[0.7em] text-[#888]"
                     desc.innerText = data.description
                     cont.appendChild(desc)
 
                     let smcont = document.createElement("div")
-                    smcont.className += "flex flex-col justify-right items-start w-[100%]"
+                    smcont.className += "flex flex-col justify-right items-end w-[100%] h-[100%] gap-[1em]"
 
-                    // details remaining
+                    let det = document.createElement("p")
+                    det.className += "text-[0.8em] text-[#212121] self-end"
+                    det.innerText = `${data.price} - ${data.unit}`
+                    smcont.appendChild(det)
+
+                    let plus = document.createElement("span")
+                    plus.className += "w-[3em] h-[1.5em] bg-[#66ba45] rounded-[5px] text-[#fff] flex justify-center items-center"
+                    smcont.appendChild(plus)
+
+                    let icon = document.createElement("i")
+                    icon.className += "bi bi-plus text-[#fff] pt-[0.3em]"
+                    plus.appendChild(icon)
 
                     product.appendChild(image)
                     product.appendChild(cont)
+                    product.appendChild(smcont)
 
                     container.appendChild(product)
 
