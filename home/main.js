@@ -276,6 +276,11 @@ function renderProducts() {
 
 }
 
+var orders = {
+    items: [],
+    total: 0
+}
+
 function addToCart(product) {
     const user = firebase.auth().currentUser;
     if (!user) {
@@ -287,156 +292,124 @@ function addToCart(product) {
 
     const userIdentifier = user.email;
 
-    db.collection('users')
-        .where('email', '==', userIdentifier)
-        .get()
-        .then(querySnapshot => {
-            if (querySnapshot.size === 1) {
-                const userDocRef = querySnapshot.docs[0].ref;
-                userDocRef.collection('orders').add(product)
-                    .then(docRef => {
+    const singleProduct = {
+        name: product.name,
+        price: product.price,
+        unit: product.unit,
+        image: product.image
+    }
 
-                        renderProducts();
-                    })
-                    .catch(error => {
-                        console.error('Error adding order to the "orders" subcollection:', error);
-                    });
-            } else {
-                console.error('User not found or multiple users with the same identifier.');
-            }
-        })
-        .catch(error => {
-            console.error('Error querying users:', error);
-        });
+    orders.items.push(singleProduct)
+
+    orders.total += Number(product.price)
+
+    let stringOrders = JSON.stringify(orders)
+
+    localStorage.setItem("smitProducts", stringOrders)
+
+    // db.collection('users')
+    //     .where('email', '==', userIdentifier)
+    //     .get()
+    //     .then(querySnapshot => {
+    //         if (querySnapshot.size === 1) {
+    //             const userDocRef = querySnapshot.docs[0].ref;
+    //             userDocRef.collection('orders').add(product)
+    //                 .then(docRef => {
+
+    //                     renderProducts();
+    //                 })
+    //                 .catch(error => {
+    //                     console.error('Error adding order to the "orders" subcollection:', error);
+    //                 });
+    //         } else {
+    //             console.error('User not found or multiple users with the same identifier.');
+    //         }
+    //     })
+    //     .catch(error => {
+    //         console.error('Error querying users:', error);
+    //     });
 }
 
 function renderCartToUser() {
-    var container = document.querySelector(".cart");
+    let productsData = localStorage.getItem("smitProducts");
+    productsData = JSON.parse(productsData);
+
+    let items = productsData.items;
+    let container = document.querySelector(".cart");
+
+    // Create an object to keep track of unique items
+    const uniqueItems = {};
+
+    items.forEach(data => {
+        // Check if the item already exists in uniqueItems
+        if (uniqueItems[data.name]) {
+            // If it exists, increment the quantity and update the total price
+            uniqueItems[data.name].quantity++;
+            uniqueItems[data.name].totalPrice += Number(data.price);
+        } else {
+            // If it doesn't exist, create a new entry
+            uniqueItems[data.name] = {
+                quantity: 1,
+                totalPrice: Number(data.price),
+                data: data
+            };
+        }
+    });
+
+    // Clear the container before rendering items
     container.innerHTML = "";
-    // console.log("renderCart");
 
-    const db = firebase.firestore();
+    // Iterate over the unique items and render them
+    for (const itemName in uniqueItems) {
+        const item = uniqueItems[itemName].data;
+        const quantity = uniqueItems[itemName].quantity;
+        const totalPrice = uniqueItems[itemName].totalPrice;
 
-    db.collection("users")
-        .get()
-        .then(function (querySnapshot) {
-            if (querySnapshot.size === 0) {
-                container.innerHTML = "<div>No user found.</div>";
-            } else {
-                querySnapshot.forEach(function (doc) {
+        let product = document.createElement("div");
+        product.className = "flex justify-left items-center gap-[1em] p-[0.5em] w-[100%]";
 
-                    const userData = doc.data();
-                    let userEmail = firebase.auth().currentUser.email
+        let image = document.createElement("img");
+        image.className = "product w-[7em] h-[5em] rounded-[15px] object-cover";
+        image.src = item.image;
 
-                    if (userEmail === userData.email) {
+        let title = document.createElement("p");
+        title.className = "font-bold text-[1em]";
+        title.innerText = item.name;
 
-                        // console.log("user", userData);
-                        const ordersCollectionRef = doc.ref.collection("orders");
+        let det = document.createElement("p");
+        det.className = "text-[0.8em] text-[#212121] w-[100%] text-right";
+        det.innerText = `${totalPrice} - ${item.unit} (x${quantity})`;
 
-                        ordersCollectionRef.get()
-                            .then(function (ordersQuerySnapshot) {
-                                if (ordersQuerySnapshot.size === 0) {
-                                    console.log("No orders found for this user.");
-                                } else {
-                                    ordersQuerySnapshot.forEach(function (orderDoc) {
-                                        const data = orderDoc.data();
-                                        // console.log("orders", data);
-
-                                        let product = document.createElement("div")
-                                        product.className += "flex justify-left items-center gap-[1em] p-[0.5em] w-[100%]"
-
-                                        let image = document.createElement("img")
-                                        image.className += "product w-[7em] h-[5em] rounded-[15px] object-cover"
-                                        image.src = data.image
-
-
-                                        let title = document.createElement("p")
-                                        title.className += "font-bold text-[1em]"
-                                        title.innerText = data.name
-
-                                        let det = document.createElement("p")
-                                        det.className += "text-[0.8em] text-[#212121] w-[100%] text-right"
-                                        det.innerText = `${data.price} - ${data.unit}`
-
-                                        let del = document.createElement("i")
-                                        del.className += "bi bi-x-lg text-[#212121]"
-                                        del.addEventListener("click", function(){ deleteProductFromCart(orderDoc.id) })
-
-                                        function deleteProductFromCart(orderDocId) {
-                                            const user = firebase.auth().currentUser;
-                                            if (!user) {
-                                                console.error('User not authenticated. Cannot delete product from cart.');
-                                                return;
-                                            }
-                                        
-                                            const db = firebase.firestore();
-                                        
-                                            // Find the user's document based on their email
-                                            db.collection("users")
-                                                .where("email", "==", user.email)
-                                                .get()
-                                                .then(function (querySnapshot) {
-                                                    if (querySnapshot.size === 0) {
-                                                        console.error('User not found.');
-                                                    } else {
-                                                        querySnapshot.forEach(function (userDoc) {
-                                                            const ordersCollectionRef = userDoc.ref.collection("orders");
-                                        
-                                                            // Find the order document with the provided orderDocId
-                                                            ordersCollectionRef.doc(orderDocId).get()
-                                                                .then(function (orderDoc) {
-                                                                    if (orderDoc.exists) {
-                                                                        // Delete the order document
-                                                                        orderDoc.ref.delete()
-                                                                            .then(function () {
-                                                                                console.log('Order deleted successfully.');
-                                                                                // You can update the cart or perform other actions
-                                                                                renderCartToUser();
-                                                                            })
-                                                                            .catch(function (error) {
-                                                                                console.error('Error deleting order:', error);
-                                                                            });
-                                                                    } else {
-                                                                        console.error('Order not found.');
-                                                                    }
-                                                                })
-                                                                .catch(function (error) {
-                                                                    console.error('Error getting order document:', error);
-                                                                });
-                                                        });
-                                                    }
-                                                })
-                                                .catch(function (error) {
-                                                    console.error("Error querying users:", error);
-                                                });
-                                        }
-                                                                                
-
-                                        product.appendChild(image)
-                                        product.appendChild(title)
-                                        product.appendChild(det)
-                                        product.appendChild(del)
-
-                                        container.appendChild(product)
-
-
-                                    });
-                                }
-                            })
-                            .catch(function (error) {
-                                console.error("Error getting orders: ", error);
-                            });
-
-                    }
-
-                });
-            }
-        })
-        .catch(function (error) {
-            console.error("Error getting user documents: ", error);
+        let del = document.createElement("i");
+        del.className = "bi bi-x-lg text-[#212121]";
+        del.addEventListener("click", function () {
+            // Call a function to delete the product from the cart (you'll need to define this function)
+            deleteProductFromCart(orderDoc.id);
         });
+
+        product.appendChild(image);
+        product.appendChild(title);
+        product.appendChild(det);
+        product.appendChild(del);
+
+        container.appendChild(product);
+    }
 }
 
+
+
+let cancelBtn = document.querySelector(".cancel")
+
+if (cancelBtn) {
+    cancelBtn.addEventListener("click", function () { cancelCart() })
+
+    function cancelCart() {
+        orders = {
+            items: [],
+            total: 0
+        }
+    }
+}
 
 document.addEventListener("DOMContentLoaded", function () {
     try {
