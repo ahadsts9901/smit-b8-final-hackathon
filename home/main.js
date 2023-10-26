@@ -63,7 +63,7 @@ function logout() {
             window.location.href = "../index.html";
         })
         .catch((error) => {
-            console.log("Sign out error:", error);
+            console.error("Sign out error:", error);
         });
 }
 
@@ -168,7 +168,7 @@ function file(event) {
             }
         },
         (error) => {
-            console.log(error)
+            console.error(error)
         },
         () => {
             uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
@@ -271,7 +271,7 @@ function renderProducts() {
             }
         })
         .catch(function (error) {
-            console.log("Error getting documents: ", error);
+            console.error("Error getting documents: ", error);
         });
 
 }
@@ -414,10 +414,11 @@ function placeOrder(event) {
         userEmail: userEmail,
         number: number,
         address: address,
+        status: "Pending",
         time: firebase.firestore.FieldValue.serverTimestamp()
     }
 
-    console.log(finalOrder);
+    // console.log(finalOrder);
 
     db.collection("orders")
         .add(finalOrder)
@@ -442,7 +443,7 @@ function placeOrder(event) {
 
             event.target.reset()
             localStorage.setItem("smitProducts", "")
-            // window.location.reload()
+            window.location.reload()
 
         })
         .catch(error => {
@@ -469,7 +470,7 @@ function userOrders() {
                     let userName = firebase.auth().currentUser.email
 
                     if (data.userEmail === userName) {
-                        console.log(data);
+                        // console.log(data);
 
                         let product = document.createElement("div")
                         product.className += "flex flex-col justify-between items-start gap-[1em] border-b-[1px] border-[#ccc] p-[0.5em] w-[100%]"
@@ -488,7 +489,7 @@ function userOrders() {
 
                         let orderTime = document.createElement("p")
                         orderTime.className += "text-[#aaa] text-[0.6em] text-left"
-                        orderTime.innerText = moment(data.time.seconds).fromNow()
+                        orderTime.innerText = `${moment(data.time.seconds).fromNow()} - ${data.status}`
 
                         let num = document.createElement("p")
                         num.className += "text-[#212121] text-[0.8em] text-right"
@@ -566,7 +567,7 @@ function userOrders() {
             }
         })
         .catch(function (error) {
-            console.log("Error getting documents: ", error);
+            console.error("Error getting documents: ", error);
         });
 
 }
@@ -579,7 +580,7 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             renderCartToUser();
         } catch (error) {
-            console.log("userOrders", error);
+            console.error("userOrders", error);
             userOrders()
         }
     }

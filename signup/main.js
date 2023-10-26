@@ -103,7 +103,7 @@ function signup(event) {
             // console.log("signed added")
         })
         .catch((error) => {
-            console.log("error signup")
+            console.error("error signup")
         });
 
 
@@ -119,11 +119,11 @@ function signup(event) {
                 // Now the photoURL is set for the user
                 window.location.href = "../home/index.html";
             }).catch((error) => {
-                console.log("Error setting profile picture:", error);
+                console.error("Error setting profile picture:", error);
             });
         })
         .catch((error) => {
-            console.log("Error creating user:", error);
+            console.error("Error creating user:", error);
         });
 
     // Reset the input fields after successful signup

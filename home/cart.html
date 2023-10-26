@@ -57,14 +57,14 @@
             class="bg-[#f0f0f0] w-[80%] p-[0.3em_1em] ml-[1em] border-b-[1px] border-[#ccc]">
         <input required type="number" placeholder="Phone Number" id="numberInput"
             class="bg-[#f0f0f0] w-[80%] p-[0.3em_1em] ml-[1em] border-b-[1px] border-[#ccc]">
-        <textarea minlength="12" maxlength="50" required placeholder="Shipping Address" id="addressInput"
+        <textarea minlength="12" maxlength="150" required placeholder="Shipping Address" id="addressInput"
             class="bg-[#f0f0f0] w-[80%] border-b-[1px] border-[#ccc] ml-[1em] h-[8em]"></textarea>
 
         <button class="button m-[1em_auto] w-[10em]">Place Order</button>
 
     </form>
 
-    <div class="p-[3em]"></div>
+    <!-- <div class="p-[3em]"></div> -->
 
     <div class="userNav navBarGreen flex justify-between items-center p-[1em] w-[100%] bg-[#f0f0f0]">
         <a href="./index.html" class="flex w-[5em] flex-col justify-center items-center">
@@ -96,7 +96,7 @@
         // logout automatically
         firebase.auth().onAuthStateChanged(function (user) {
             if (!user) {
-                console.log("yes");
+                // console.log("yes");
                 window.location.href = "../login/index.html";
             } else {
                 let username = user.email

@@ -37,8 +37,8 @@ body {
     height: 100vh;
     padding: 0!important;
     padding-bottom: 1em;
-    border-radius: 15px;
-    box-shadow: 0 0 4px #66ba45;
+    /* border-radius: 15px; */
+    /* box-shadow: 0 0 4px #66ba45; */
     margin-top: 1em;
 }
 

@@ -77,7 +77,7 @@ function login(event) {
             window.location.href = "";
         })
         .catch((error) => {
-            console.log("Login error:", error);
+            console.error("Login error:", error);
             Swal.fire({
                 icon: 'error',
                 title: 'Access Denied',

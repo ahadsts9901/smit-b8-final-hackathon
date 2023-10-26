@@ -70,7 +70,7 @@ function addProduct(e) {
             // console.log(snapshot);
         },
         (error) => {
-            console.log(error);
+            console.error(error);
         },
         () => {
             uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
@@ -141,7 +141,7 @@ function logout() {
             window.location.href = "../index.html";
         })
         .catch((error) => {
-            console.log("Sign out error:", error);
+            console.error("Sign out error:", error);
         });
 }
 
@@ -246,7 +246,7 @@ function file(event) {
             }
         },
         (error) => {
-            console.log(error)
+            console.error(error)
         },
         () => {
             uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
@@ -297,7 +297,7 @@ function renderProducts() {
 
                     var data = doc.data();
 
-                    console.log(data)
+                    // console.log(data)
 
                     let product = document.createElement("div")
                     product.className += "flex justify-between items-center gap-[1em] p-[0.5em] w-[100%] border-[1px] border-[#66ba45] rounded-[10px]"
@@ -324,7 +324,165 @@ function renderProducts() {
             }
         })
         .catch(function (error) {
-            console.log("Error getting documents: ", error);
+            console.error("Error getting documents: ", error);
+        });
+
+}
+
+function adminOrders() {
+
+    var container = document.querySelector(".adminOrders");
+    container.innerHTML = "";
+
+    db.collection("orders")
+        .orderBy("time", "desc") //sort by time
+        .get()
+        .then(function (querySnapshot) {
+            if (querySnapshot.size === 0) {
+                container.innerHTML = "<div class='blue'>No Orders found</div>";
+            } else {
+                querySnapshot.forEach(function (doc) {
+                    var data = doc.data();
+
+                    let userName = firebase.auth().currentUser.email
+
+                    if (data.userEmail === userName) {
+                        // console.log(data);
+
+                        let product = document.createElement("div")
+                        product.className += "flex flex-col justify-between items-start gap-[1em] border-b-[1px] border-[#ccc] p-[0.5em] w-[100%]"
+
+                        let head = document.createElement("div")
+                        head.className += "flex justify-between items-center gap-[1em] w-[100%]"
+
+                        let orderName = document.createElement("p")
+                        orderName.className += "text-[#212121] text-left"
+                        orderName.innerText = data.name
+
+                        let cont = document.createElement("div")
+                        cont.className += "flex flex-col justify-right items-start w-[fit-content]"
+
+                        // time
+
+                        let orderTime = document.createElement("p")
+                        orderTime.className += "text-[#aaa] text-[0.6em] text-left"
+                        orderTime.innerText = `${moment(data.time.seconds).fromNow()} - ${data.status}`
+
+                        let num = document.createElement("p")
+                        num.className += "text-[#212121] text-[0.8em] text-right"
+                        num.innerText = data.number
+
+                        // time completed
+
+                        let body = document.createElement("div")
+                        body.className += "flex flex-col justify-start items-start gap-[0em]"
+
+                        // products quantity algorithm started
+
+                        const productQuantities = {};
+
+                        data.items.forEach((product) => {
+                            const productName = product.name;
+                            if (productQuantities[productName]) {
+                                productQuantities[productName].quantity += 1;
+                            } else {
+                                productQuantities[productName] = {
+                                    quantity: 1,
+                                    name: productName,
+                                    unit: product.unit,
+                                    price: product.price,
+                                    image: product.image,
+                                };
+                            }
+                        });
+
+                        for (const productName in productQuantities) {
+                            const product = productQuantities[productName];
+                            const productQuantity = product.quantity;
+                            let finalQuantity = `${productName} x ${productQuantity}`
+                            // console.log(`Unit: ${product.unit}`);
+                            // console.log(`Price: ${product.price}`);
+                            // console.log(`Image: ${product.image}`);
+                            // console.log('---');
+
+                            let quantity = document.createElement("p")
+                            quantity.className += "text-[#aaa] text-[0.8em]"
+                            quantity.innerText = finalQuantity
+
+                            body.appendChild(quantity)
+                        }
+
+                        //   algorithm completed
+
+                        let footer = document.createElement("div")
+                        footer.className += "flex justify-between items-center w-[100%]"
+
+                        let footerTotal = document.createElement("p")
+                        footerTotal.className += "text-[#212121]"
+                        footerTotal.innerText = "Total"
+
+                        let footerPrice = document.createElement("p")
+                        footerPrice.className += "text-[#66ba45]"
+                        footerPrice.innerText = `Rs ${data.total}`
+
+                        footer.appendChild(footerTotal)
+                        footer.appendChild(footerPrice)
+
+                        // making select
+
+                        let select = document.createElement("select")
+                        select.className += "w-[100%] bg-[#fff] text-[#888] border-0 rounded-[5px] p-[0.5em]"
+                        select.addEventListener("change", function () { updateStatus(doc.id, select.value) })
+
+                        function updateStatus(orderId, newStatus) {
+                            var orderRef = db.collection("orders").doc(orderId);
+
+                            orderRef.update({
+                                status: newStatus
+                            })
+                                .then(function () {
+                                    // console.log("Status updated successfully!");
+                                })
+                                .catch(function (error) {
+                                    console.error("Error updating status: ", error);
+                                });
+                        }
+
+
+                        let opt1 = document.createElement("option")
+                        opt1.innerText = "Pending"
+                        opt1.value = "Pending"
+                        select.appendChild(opt1)
+
+                        let opt2 = document.createElement("option")
+                        opt2.innerText = "In Progress"
+                        opt2.value = "In Progress"
+                        select.appendChild(opt2)
+
+                        let opt3 = document.createElement("option")
+                        opt3.innerText = "Delievered"
+                        opt3.value = "Delievered"
+                        select.appendChild(opt3)
+
+                        head.appendChild(cont)
+                        head.appendChild(num)
+                        cont.appendChild(orderName)
+                        cont.appendChild(orderTime)
+
+                        product.appendChild(head)
+                        product.appendChild(body)
+                        product.appendChild(footer)
+                        product.appendChild(select)
+
+                        container.appendChild(product)
+
+                    }
+
+                });
+            }
+        })
+        .catch(function (error) {
+            console.error("Error getting documents: ", error);
         });
 
 }
@@ -334,11 +492,10 @@ document.addEventListener("DOMContentLoaded", function () {
         renderProducts();
     } catch (error) {
         console.error('render products', error);
-        // try {
-        //     renderCartToUser();
-        // } catch (error) {
-        //     console.log("userOrders", error);
-        //     userOrders()
-        // }
+        try {
+            adminOrders();
+        } catch (error) {
+            console.error("userOrders", error);
+        }
     }
 });

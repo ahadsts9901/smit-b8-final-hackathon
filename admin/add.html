@@ -40,7 +40,7 @@
                 <p id="adminName" class="text-[#03509c]"></p>
                 <p class="text-[#66ba45] text-[0.8em]">Admin</p>
             </div>
-            <i class="text-[#222] bi bi-journal-text text-[1.5em]"></i>
+            <a href="./orders.html" class="journal text-[#222] bi bi-journal-text text-[1.5em]"></a>
         </div>
 
         <p class="w-[100%] text-left text-[#03509c]">Add New Item</p>
@@ -82,13 +82,13 @@
                     placeholder="$3.22">
             </div>
 
-            <button class="button m-[auto]" name="button">Add Product</button>
+            <button class="button w-[80%] m-[auto]" name="button">Add Product</button>
 
         </form>
 
-        <div class="h-[5em]"></div>
+        <!-- <div class="h-[5em]"></div> -->
 
-        <div class="userNav navBarGreen flex justify-between items-center p-[1em] w-[100%] bg-[#f0f0f0]">
+        <div class="navBarGreen flex justify-between items-center p-[1em] w-[100%] bg-[#f0f0f0]">
             <a href="./index.html" class="flex w-[5em] flex-col justify-center items-center">
                 <i class="text-[#666] bi bi-house-fill text-[1.5em]"></i>
                 <p class="text-[#777]">Home</p>
@@ -121,7 +121,7 @@
         // logout automatically
         firebase.auth().onAuthStateChanged(function (user) {
             if (!user) {
-                console.log("yes");
+                // console.log("yes");
                 window.location.href = "../login/index.html";
             } else {
                 let username = user.email

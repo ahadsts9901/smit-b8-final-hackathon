@@ -30,7 +30,26 @@
 
 <body>
 
-    
+    <div class="w-[100%] p-[1em] flex flex-col justify-center gap-[1em] items-center">
+
+        <div class="w-[100%] flex justify-center gap-[1em] items-center border-b-[1px] border-[#ccc] pb-[1em]">
+            <i class="text-[#666] bi bi-arrow-left-circle-fill text-[1.5em]" onclick="window.history.back()"></i>
+            <img src="../assets/profile.webp" id="adminImg"
+                class="w-[3em] h-[3em] border-[2px] border-[#66ba45] rounded-[100%]">
+            <div class="flex flex-col justify-center">
+                <p id="adminName" class="text-[#03509c]"></p>
+                <p class="text-[#66ba45] text-[0.8em]">Admin</p>
+            </div>
+            <a href="./orders.html" class="journal text-[#222] bi bi-journal-text text-[1.5em]"></a>
+        </div>
+
+        <p class="w-[100%] text-left text-[#03509c]">Orders</p>
+
+        <div class="adminOrders w-[100%] flex flex-col justify-right items-start gap-[1em] p-[0.5em]"></div>
+
+        <!-- <div class="h-[5em]"></div> -->
+
+    </div>
 
     <!-- firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -38,6 +57,8 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <!-- sweet alert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- moment js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <!-- javascript -->
     <script src="./main.js"></script>
 </body>
