@@ -44,6 +44,10 @@
 
         <p class="w-[100%] text-left text-[#03509c]">All Product</p>
 
+        <div class="adminProducts flex flex-col justify-right items-center gap-[1em] p-[1em] w-[100%]"></div>
+
+        <div class="p-[3em]"></div>
+
         <div class="userNav navBarGreen flex justify-between items-center p-[1em] w-[100%] bg-[#f0f0f0]">
             <a href="./index.html" class="flex w-[5em] flex-col justify-center items-center">
                 <i class="text-[#66ba45] bi bi-house-fill text-[1.5em]"></i>
@@ -71,25 +75,8 @@
     <!-- sweet alert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- javascript -->
+    <script src="./main.js"></script>
     <script>
-
-const firebaseConfig = {
-    apiKey: "AIzaSyBUn3n_bx699MPHBgdCyaqnh-gS1nOMtvI",
-    authDomain: "b8-final.firebaseapp.com",
-    projectId: "b8-final",
-    storageBucket: "b8-final.appspot.com",
-    messagingSenderId: "196020829543",
-    appId: "1:196020829543:web:40089549bcf2048b42c3c2",
-    measurementId: "G-LD2CQVZL42"
-  };
-
-  
-
-
-        // initialize firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore()
-
         // logout automatically
         firebase.auth().onAuthStateChanged(function (user) {
             if (!user) {

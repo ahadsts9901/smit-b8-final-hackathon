@@ -121,7 +121,7 @@ function addProduct(e) {
                             console.error("Error adding document: ", error);
                         });
 
-                }, 0 )
+                }, 0)
 
                 e.target.reset()
 
@@ -281,3 +281,64 @@ function file(event) {
     );
 
 }
+
+function renderProducts() {
+
+    var container = document.querySelector(".adminProducts")
+    container.innerHTML = "";
+
+    db.collection("products")
+        .get()
+        .then(function (querySnapshot) {
+            if (querySnapshot.size === 0) {
+                container.innerHTML = "<div class='blue'>No Product found</div>";
+            } else {
+                querySnapshot.forEach(function (doc) {
+
+                    var data = doc.data();
+
+                    console.log(data)
+
+                    let product = document.createElement("div")
+                    product.className += "flex justify-between items-center gap-[1em] p-[0.5em] w-[100%] border-[1px] border-[#66ba45] rounded-[10px]"
+
+                    let image = document.createElement("img")
+                    image.className += "product w-[6em] h-[4em] rounded-[15px] object-cover"
+                    image.src = data.image
+
+                    let title = document.createElement("p")
+                    title.className += "font-bold text-[1em] w-[100%] text-left"
+                    title.innerText = data.name
+
+                    let det = document.createElement("p")
+                    det.className += "text-[#aaa] pr-[1em]"
+                    det.innerText = `${data.price}`
+
+                    product.appendChild(image)
+                    product.appendChild(title)
+                    product.appendChild(det)
+
+                    container.appendChild(product)
+
+                });
+            }
+        })
+        .catch(function (error) {
+            console.log("Error getting documents: ", error);
+        });
+
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    try {
+        renderProducts();
+    } catch (error) {
+        console.error('render products', error);
+        // try {
+        //     renderCartToUser();
+        // } catch (error) {
+        //     console.log("userOrders", error);
+        //     userOrders()
+        // }
+    }
+});
