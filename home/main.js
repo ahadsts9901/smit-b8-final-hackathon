@@ -307,38 +307,25 @@ function addToCart(product) {
 
     localStorage.setItem("smitProducts", stringOrders)
 
-    // db.collection('users')
-    //     .where('email', '==', userIdentifier)
-    //     .get()
-    //     .then(querySnapshot => {
-    //         if (querySnapshot.size === 1) {
-    //             const userDocRef = querySnapshot.docs[0].ref;
-    //             userDocRef.collection('orders').add(product)
-    //                 .then(docRef => {
-
-    //                     renderProducts();
-    //                 })
-    //                 .catch(error => {
-    //                     console.error('Error adding order to the "orders" subcollection:', error);
-    //                 });
-    //         } else {
-    //             console.error('User not found or multiple users with the same identifier.');
-    //         }
-    //     })
-    //     .catch(error => {
-    //         console.error('Error querying users:', error);
-    //     });
 }
 
 function renderCartToUser() {
     let productsData = localStorage.getItem("smitProducts");
     productsData = JSON.parse(productsData);
 
+    if (!productsData || !productsData.items) {
+        // Handle the case where there's no data or items
+        return;
+    }
+
     let items = productsData.items;
     let container = document.querySelector(".cart");
 
     // Create an object to keep track of unique items
     const uniqueItems = {};
+
+    // Initialize the total variable
+    let total = 0;
 
     items.forEach(data => {
         // Check if the item already exists in uniqueItems
@@ -354,6 +341,9 @@ function renderCartToUser() {
                 data: data
             };
         }
+
+        // Update the total with the current item's total price
+        total += Number(data.price);
     });
 
     // Clear the container before rendering items
@@ -380,35 +370,84 @@ function renderCartToUser() {
         det.className = "text-[0.8em] text-[#212121] w-[100%] text-right";
         det.innerText = `${totalPrice} - ${item.unit} (x${quantity})`;
 
-        let del = document.createElement("i");
-        del.className = "bi bi-x-lg text-[#212121]";
-        del.addEventListener("click", function () {
-            // Call a function to delete the product from the cart (you'll need to define this function)
-            deleteProductFromCart(orderDoc.id);
-        });
-
         product.appendChild(image);
         product.appendChild(title);
         product.appendChild(det);
-        product.appendChild(del);
 
         container.appendChild(product);
     }
+
+    document.querySelector("#total").innerText = `Rs ${total}`
+
 }
 
-
-
-let cancelBtn = document.querySelector(".cancel")
+let cancelBtn = document.querySelector(".cancel");
 
 if (cancelBtn) {
-    cancelBtn.addEventListener("click", function () { cancelCart() })
+    cancelBtn.addEventListener("click", function () {
+        cancelCart();
+    });
 
     function cancelCart() {
-        orders = {
-            items: [],
-            total: 0
-        }
+        localStorage.removeItem("smitProducts"); // Use removeItem to clear the data
+        window.location.reload()
     }
+}
+
+function placeOrder(event) {
+
+    event.preventDefault()
+
+    let orders = localStorage.getItem("smitProducts")
+    orders = JSON.parse(orders)
+
+    let name = document.querySelector("#nameInput").value
+    let email = document.querySelector("#emailInput").value
+    let number = document.querySelector("#numberInput").value
+    let address = document.querySelector("#addressInput").value
+    let time = firebase.firestore.FieldValue.serverTimestamp();
+
+    let finalOrder = {
+        ...orders,
+        name: name,
+        email: email,
+        number: number,
+        address: address,
+        time: time
+    }
+
+    console.log(finalOrder);
+
+    db.collection("orders")
+        .add(finalOrder)
+        .then(docRef => {
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 1500,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            })
+
+            Toast.fire({
+                icon: 'success',
+                title: 'Order done'
+            })
+
+            event.target.reset()
+            localStorage.setItem("smitProducts", "")
+            // window.location.reload()
+
+        })
+        .catch(error => {
+            console.error("Error adding order: ", error);
+        });
+
 }
 
 document.addEventListener("DOMContentLoaded", function () {

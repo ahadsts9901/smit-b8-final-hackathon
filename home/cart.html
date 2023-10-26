@@ -42,7 +42,29 @@
         </div>
     </div>
 
-    <div class="cart w-[90%] h-[20em] p-[1em] flex flex-col justify-right items-start border-b-[1px] border-[#aaa]"></div>
+    <div class="cart w-[90%] h-[20em] p-[1em] flex flex-col justify-right items-start border-b-[1px] border-[#aaa]">
+    </div>
+
+    <form onsubmit="placeOrder(event)" class="w-[100%] flex flex-col justify-right items-start gap-[1em] p-[0em_1em]">
+        <div class="w-[100%] flex justify-between items-center text-[0.8em] p-[0em_1.5em]">
+            <p class="text-[#212121]">Total</p>
+            <p id="total" class="text-[#66ba45]"></p>
+        </div>
+
+        <input minlength="3" maxlength="16" required type="text" placeholder="Full Name" id="nameInput"
+            class="bg-[#f0f0f0] w-[80%] p-[0.3em_1em] ml-[1em] border-b-[1px] border-[#ccc]">
+        <input minlength="3" maxlength="16" required type="email" placeholder="Email" id="emailInput"
+            class="bg-[#f0f0f0] w-[80%] p-[0.3em_1em] ml-[1em] border-b-[1px] border-[#ccc]">
+        <input required type="number" placeholder="Phone Number" id="numberInput"
+            class="bg-[#f0f0f0] w-[80%] p-[0.3em_1em] ml-[1em] border-b-[1px] border-[#ccc]">
+        <textarea minlength="12" maxlength="50" required placeholder="Shipping Address" id="addressInput"
+            class="bg-[#f0f0f0] w-[80%] border-b-[1px] border-[#ccc] ml-[1em] h-[8em]"></textarea>
+
+        <button class="button m-[1em_auto] w-[10em]">Place Order</button>
+
+    </form>
+
+    <div class="p-[3em]"></div>
 
     <div class="userNav navBarGreen flex justify-between items-center p-[1em] w-[100%] bg-[#f0f0f0]">
         <a href="./index.html" class="flex w-[5em] flex-col justify-center items-center">
@@ -70,7 +92,7 @@
     <!-- javascript -->
     <script src="./main.js"></script>
     <script>
-        
+
         // logout automatically
         firebase.auth().onAuthStateChanged(function (user) {
             if (!user) {
