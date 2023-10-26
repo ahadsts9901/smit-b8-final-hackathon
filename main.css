@@ -697,6 +697,10 @@ a.journal {
   color: #212121 !important;
 }
 
+.cartImp{
+  height: 20em!important;
+}
+
 @media only screen and (max-width: 550px) {
   .special {
     flex-direction: column-reverse;
